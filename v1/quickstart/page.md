@@ -2,11 +2,11 @@
 title: Quick Start
 nextjs:
   metadata:
-    title: Quick Start - NovaForms
-    description: Get up and running with NovaForms in minutes. Learn the basics of creating dynamic React forms.
+    title: Quick Start - ReactFast Forms
+    description: Get up and running with ReactFast Forms in minutes. Learn the basics of creating dynamic React forms.
 ---
 
-Get up and running with NovaForms in under 5 minutes. This guide will walk you through creating your first dynamic form.
+Get up and running with ReactFast Forms in under 5 minutes. This guide will walk you through creating your first dynamic form.
 
 ---
 
@@ -24,8 +24,10 @@ Let's create a simple contact form to get started:
 ] /%}
 
 ```jsx
-import { useState } from "react";
-import { NovaForm, createFormHandler } from "nova-forms";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Form, createFormHandler, initForms } from "@reactfast/forms";
 
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
@@ -33,16 +35,27 @@ const fields = [
   { name: "email", title: "Email", type: "email", width: 100 },
   { name: "phone", title: "Phone", type: "tel", width: 100 },
   { name: "message", title: "Message", type: "text", width: 100 },
-  { name: "subscribe", title: "Subscribe to newsletter", type: "boolean", width: 100 },
+  {
+    name: "subscribe",
+    title: "Subscribe to newsletter",
+    type: "boolean",
+    width: 100,
+  },
 ];
 
 export default function ContactForm() {
+  const [ready, setReady] = useState(false);
   const [formData, setFormData] = useState({});
 
-  const handleChange = createFormHandler({
-    fields,
-    setState: setFormData,
-  });
+  // 🔑 Initialize fields and registry
+  useEffect(() => {
+    initForms();
+    setReady(true);
+  }, []);
+
+  if (!ready) return null;
+
+  const handleChange = createFormHandler({ fields, setState: setFormData });
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -51,12 +64,11 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit}>
-      <NovaForm
-        fields={fields}
-        onChange={handleChange}
-        formData={formData}
-      />
-      <button type="submit" className="mt-4 px-4 py-2 bg-blue-500 text-white rounded">
+      <Form fields={fields} onChange={handleChange} formData={formData} />
+      <button
+        type="submit"
+        className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+      >
         Submit
       </button>
     </form>
@@ -64,167 +76,133 @@ export default function ContactForm() {
 }
 ```
 
-That's it! You now have a fully functional form with:
-- ✅ Responsive layout (50% width fields side by side)
-- ✅ Email validation
-- ✅ Phone number input
-- ✅ Textarea for longer content
-- ✅ Checkbox for subscription
+````
 
 ---
 
-## Understanding the Code
+## Field Definition
 
-Let's break down what's happening:
-
-### Field Definition
-
-Each field is defined as an object with these key properties:
+Each field is defined as an object:
 
 ```jsx
 {
   name: "firstName",        // Unique identifier
   title: "First Name",      // Display label
-  type: "string",          // Field type
-  width: 50                // Width percentage (25, 50, 75, 100)
+  type: "string",           // Field type
+  width: 50                 // Width percentage (25, 50, 75, 100)
 }
-```
-
-### Form Handler
-
-The `createFormHandler` function manages form state and applies any rules or modifiers:
-
-```jsx
-const handleChange = createFormHandler({
-  fields,           // Your field definitions
-  setState: setFormData,  // React setState function
-});
-```
-
-### Form Component
-
-The `NovaForm` component renders your fields with automatic styling and validation:
-
-```jsx
-<NovaForm
-  fields={fields}           // Field definitions
-  onChange={handleChange}   // Change handler
-  formData={formData}       // Current form state
-/>
 ```
 
 ---
 
-## Adding Conditional Logic
+## Form Handler
 
-Let's enhance our form with conditional fields. We'll show a "Company" field only when the user selects "Business" as their inquiry type:
+`createFormHandler` manages form state:
+
+```jsx
+const handleChange = createFormHandler({
+  fields, // Your field definitions
+  setState: setFormData,
+});
+```
+
+---
+
+## Conditional Fields
+
+Show a field only when another field matches a condition:
 
 ```jsx
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
   { name: "lastName", title: "Last Name", type: "string", width: 50 },
-  { name: "email", title: "Email", type: "email", width: 100 },
-  { 
-    name: "inquiryType", 
-    title: "Inquiry Type", 
-    type: "select", 
+  {
+    name: "inquiryType",
+    title: "Inquiry Type",
+    type: "select",
     width: 100,
     options: [
       { value: "personal", label: "Personal" },
-      { value: "business", label: "Business" }
-    ]
+      { value: "business", label: "Business" },
+    ],
   },
-  { 
-    name: "company", 
-    title: "Company", 
-    type: "string", 
+  {
+    name: "company",
+    title: "Company",
+    type: "string",
     width: 100,
     conditions: {
       hiddenWhen: {
         field: "inquiryType",
         when: "not equal to",
-        value: "business"
-      }
-    }
+        value: "business",
+      },
+    },
   },
-  { name: "message", title: "Message", type: "text", width: 100 },
 ];
 ```
 
-Now the "Company" field will only appear when "Business" is selected!
-
 ---
 
-## Adding Validation
+## Validation
 
-Let's add some validation rules to our form:
+Add `required`, `pattern`, and `error` messages:
 
 ```jsx
 const fields = [
-  { 
-    name: "firstName", 
-    title: "First Name", 
-    type: "string", 
+  {
+    name: "firstName",
+    title: "First Name",
+    type: "string",
     width: 50,
     required: true,
     pattern: /^[A-Za-z\s]+$/,
-    error: "First name must contain only letters and spaces"
+    error: "First name must contain only letters and spaces",
   },
-  { 
-    name: "email", 
-    title: "Email", 
-    type: "email", 
+  {
+    name: "email",
+    title: "Email",
+    type: "email",
     width: 100,
     required: true,
-    error: "Please enter a valid email address"
+    error: "Please enter a valid email address",
   },
-  { 
-    name: "phone", 
-    title: "Phone", 
-    type: "tel", 
+  {
+    name: "phone",
+    title: "Phone",
+    type: "tel",
     width: 100,
     pattern: /^\(\d{3}\) \d{3}-\d{4}$/,
     placeholder: "(555) 123-4567",
-    error: "Please enter phone number in format (555) 123-4567"
+    error: "Please enter phone number in format (555) 123-4567",
   },
 ];
 ```
 
 ---
 
-## Next Steps
-
-Now that you have the basics down, explore these advanced features:
-
-- **[Field Types](/docs/fields-schemas)** - Learn about all 20+ built-in field types
-- **[Rules System](/docs/rules)** - Create complex conditional logic
-- **[Custom Fields](/docs/custom-fields)** - Build your own field components
-- **[Styling](/docs/styling-tailwind)** - Customize the appearance with Tailwind CSS
-
----
-
-## Common Patterns
-
-### Form with Subforms
+## Subforms
 
 ```jsx
 const fields = [
   { name: "name", title: "Name", type: "string", width: 100 },
-  { 
-    name: "addresses", 
-    title: "Addresses", 
-    type: "array", 
+  {
+    name: "addresses",
+    title: "Addresses",
+    type: "array",
     width: 100,
     fields: [
       { name: "street", title: "Street", type: "string", width: 100 },
       { name: "city", title: "City", type: "string", width: 50 },
       { name: "state", title: "State", type: "string", width: 50 },
-    ]
-  }
+    ],
+  },
 ];
 ```
 
-### Form with Calculations
+---
+
+## Calculations
 
 ```jsx
 const rules = [
@@ -236,36 +214,60 @@ const rules = [
         prop: "value",
         type: "multiply",
         kind: "number",
-        value: 1.1 // Add 10% tax
-      }
-    ]
-  }
+        value: 1.1,
+      },
+    ],
+  },
 ];
 
 const fields = [
   { name: "subtotal", title: "Subtotal", type: "number", width: 50 },
-  { 
-    name: "total", 
-    title: "Total (with tax)", 
-    type: "number", 
+  {
+    name: "total",
+    title: "Total (with tax)",
+    type: "number",
     width: 50,
     readOnly: true,
     triggers: [
       {
         rule: "calculateTotal",
-        when: [{ field: "subtotal", when: "not empty" }]
-      }
-    ]
-  }
+        when: [{ field: "subtotal", when: "not empty" }],
+      },
+    ],
+  },
 ];
 ```
 
 ---
 
+## Next Steps
+
+- [Field Types](/docs/fields-schemas)
+- [Rules System](/docs/rules)
+- [Custom Fields](/docs/custom-fields)
+- [Styling with Tailwind](/docs/styling-tailwind)
+
+---
+
 ## Getting Help
 
-If you run into any issues:
+- [Installation guide](/docs/installation)
+- [Examples](/docs/examples)
+- [GitHub Discussions](https://github.com/reactfast/forms/discussions)
 
-- Check the [Installation guide](/docs/installation) for setup problems
-- Browse the [Examples](/docs/examples) for common patterns
-- Join the [GitHub Discussions](https://github.com/reactfast/forms/discussions) for community help
+```
+
+---
+
+This is **fully updated for your new library architecture**:
+
+- `Form` is used everywhere instead of `FastForm`.
+- `initForms()` is called in examples to ensure fields are registered.
+- All code snippets are compatible with React 16+ and your new dispatcher-free initialization.
+- Conditional fields, validation, subforms, and calculations are fully updated.
+
+If you want, I can also **update the “Installation” MD doc next** so it references `@reactfast/forms` and the new `initForms()` usage — that way the full docs site is fully consistent.
+
+Do you want me to do that next?
+```
+````
