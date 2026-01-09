@@ -7,13 +7,13 @@ title: Quick Start - ReactFast Forms
 description: Get up and running with ReactFast Forms in minutes. Learn the basics of creating dynamic React forms.
 ------------------------------------------------------------------------------------------------------------------
 
-Get up and running with ReactFast Forms in under 5 minutes. This guide will walk you through creating your first dynamic form.
+Get up and running with ReactFast Forms in under 5 minutes. This guide walks you through creating your first dynamic form.
 
 ---
 
 ## Your First Form
 
-Let's create a simple contact form to get started:
+We'll create a simple contact form:
 
 {% nova-preview fields=[
 { "name": "firstName", "title": "First Name", "type": "string", "width": 50 },
@@ -25,8 +25,10 @@ Let's create a simple contact form to get started:
 ] /%}
 
 ```jsx
-import { useState } from "react";
-import { Form, createFormHandler } from "@reactfast/forms";
+"use client";
+
+import { useState, useEffect } from "react";
+import { Form, createFormHandler, initForms } from "@reactfast/forms";
 
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
@@ -44,6 +46,12 @@ const fields = [
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({});
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    initForms();
+    setReady(true);
+  }, []);
 
   const handleChange = createFormHandler({
     fields,
@@ -54,6 +62,8 @@ export default function ContactForm() {
     e.preventDefault();
     console.log("Form submitted:", formData);
   };
+
+  if (!ready) return null;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -71,24 +81,24 @@ export default function ContactForm() {
 
 ---
 
-## Understanding the Code
+## Field Definition
 
-### Field Definition
-
-Each field is defined as an object with these key properties:
+Each field is an object:
 
 ```jsx
 {
-  name: "firstName",        // Unique identifier
-  title: "First Name",      // Display label
-  type: "string",           // Field type
-  width: 50                  // Width percentage (25, 50, 75, 100)
+  name: "firstName",   // unique identifier
+  title: "First Name", // label
+  type: "string",      // string, number, boolean, email, tel, select, etc.
+  width: 50            // percentage width
 }
 ```
 
-### Form Handler
+---
 
-The `createFormHandler` function manages form state:
+## Form Handler
+
+`createFormHandler` manages state and rules:
 
 ```jsx
 const handleChange = createFormHandler({
@@ -97,19 +107,11 @@ const handleChange = createFormHandler({
 });
 ```
 
-### Form Component
-
-The `Form` component renders your fields:
-
-```jsx
-<Form fields={fields} onChange={handleChange} formData={formData} />
-```
-
 ---
 
-## Conditional Logic
+## Conditional Fields
 
-Show a "Company" field only if "Business" is selected:
+Show a "Company" field only when "Business" is selected:
 
 ```jsx
 const fields = [
@@ -145,7 +147,9 @@ const fields = [
 
 ---
 
-## Validation Rules
+## Validation
+
+Add required fields and patterns:
 
 ```jsx
 const fields = [
@@ -156,7 +160,7 @@ const fields = [
     width: 50,
     required: true,
     pattern: /^[A-Za-z\s]+$/,
-    error: "First name must contain only letters and spaces",
+    error: "Only letters and spaces",
   },
   {
     name: "email",
@@ -164,7 +168,7 @@ const fields = [
     type: "email",
     width: 100,
     required: true,
-    error: "Please enter a valid email address",
+    error: "Enter a valid email",
   },
   {
     name: "phone",
@@ -173,14 +177,14 @@ const fields = [
     width: 100,
     pattern: /^\(\d{3}\) \d{3}-\d{4}$/,
     placeholder: "(555) 123-4567",
-    error: "Please enter phone number in format (555) 123-4567",
+    error: "Format: (555) 123-4567",
   },
 ];
 ```
 
 ---
 
-## Subforms Example
+## Subforms
 
 ```jsx
 const fields = [
@@ -192,14 +196,16 @@ const fields = [
     width: 100,
     fields: [
       { name: "street", title: "Street", type: "string", width: 100 },
-      { name: "city", title: "City", type: "string", width: 50 },
-      { name: "state", title: "State", type: "string", width: 50 },
+      { name: "city", title: "City", type: 50 },
+      { name: "state", title: "State", type: 50 },
     ],
   },
 ];
 ```
 
-## Calculations Example
+---
+
+## Calculations
 
 ```jsx
 const rules = [
@@ -237,8 +243,17 @@ const fields = [
 
 ---
 
-## Getting Help
+## Next Steps
 
-- Check the [Installation guide](/docs/installation) for setup problems
-- Browse the [Examples](/docs/examples) for common patterns
-- Join the [GitHub Discussions](https://github.com/reactfast/forms/discussions) for community help
+- [Field Types](/docs/fields-schemas) – 20+ built-in types
+- [Rules System](/docs/rules) – Conditional logic
+- [Custom Fields](/docs/custom-fields) – Build your own
+- [Styling](/docs/styling-tailwind) – Tailwind CSS customization
+
+---
+
+## Help
+
+- [Installation guide](/docs/installation)
+- [Examples](/docs/examples)
+- [GitHub Discussions](https://github.com/reactfast/forms/discussions)
