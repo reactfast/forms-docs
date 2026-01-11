@@ -84,7 +84,7 @@ export default function TestForm() {
 }
 ```
 
-{% nova-preview fields = [
+{% nova-preview fields=[
   { name: "test", title: "Test Field", type: "string", width: 100 }
 ] /%}
 
