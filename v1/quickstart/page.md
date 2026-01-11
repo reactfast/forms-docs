@@ -28,7 +28,7 @@ We'll create a simple contact form:
 "use client";
 
 import { useState, useEffect } from "react";
-import { Form, createFormHandler, initForms } from "@reactfast/forms";
+import { Form, createFormHandler } from "@reactfast/forms";
 
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
@@ -46,35 +46,29 @@ const fields = [
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({});
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    initForms();
-    setReady(true);
-  }, []);
 
   const handleChange = createFormHandler({
     fields,
     setState: setFormData,
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form submitted:", formData);
+  const handleSubmit() {
+    //  Your submit logic
   };
 
   if (!ready) return null;
 
   return (
-    <form onSubmit={handleSubmit}>
+    <>
       <Form fields={fields} onChange={handleChange} formData={formData} />
-      <button
-        type="submit"
+      <div
+        id="submitButton"
+        onClick={handleSubmit}
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
       >
         Submit
-      </button>
-    </form>
+      </div>
+    </>
   );
 }
 ```

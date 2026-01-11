@@ -44,7 +44,7 @@ Create a simple form with just a few lines of code:
 
 ```jsx
 import { useState } from "react";
-import { FastForm, createFormHandler } from "@reactfast/forms";
+import { Form, createFormHandler, initForm } from "@reactfast/forms";
 
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
@@ -61,9 +61,12 @@ export default function App() {
     setState: setFormData,
   });
 
-  return (
-    <FastForm fields={fields} onChange={handleChange} formData={formData} />
-  );
+  useEffect(() => {
+    initForms();
+    setReady(true);
+  }, []);
+
+  return <Form fields={fields} onChange={handleChange} formData={formData} />;
 }
 ```
 
