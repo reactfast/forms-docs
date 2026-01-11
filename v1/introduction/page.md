@@ -29,13 +29,13 @@ Get ReactFast Forms running in your project in under 5 minutes.
 Install ReactFast Forms and its peer dependencies:
 
 ```shell
-npm install @reactfast/forms react react-dom
+npm install @reactfast/forms
 ```
 
-ReactFast Forms requires **React 18+** and **React DOM 18+** as peer dependencies.
+ReactFast Forms requires **React 18+** and **React DOM 16+** as peer dependencies.
 
 {% callout type="warning" title="React Version Requirement" %}
-Make sure you're using React 18 or higher. ReactFast Forms uses modern React features that aren't available in older versions.
+Make sure you're using React 16 or higher. ReactFast Forms uses modern React features that aren't available in older versions.
 {% /callout %}
 
 ### Your first form
@@ -44,7 +44,7 @@ Create a simple form with just a few lines of code:
 
 ```jsx
 import { useState } from "react";
-import { Form, createFormHandler, initForm } from "@reactfast/forms";
+import { Form, createFormHandler } from "@reactfast/forms";
 
 const fields = [
   { name: "firstName", title: "First Name", type: "string", width: 50 },
@@ -60,11 +60,6 @@ export default function App() {
     fields,
     setState: setFormData,
   });
-
-  useEffect(() => {
-    initForms();
-    setReady(true);
-  }, []);
 
   return <Form fields={fields} onChange={handleChange} formData={formData} />;
 }
