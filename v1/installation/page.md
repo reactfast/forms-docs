@@ -84,8 +84,10 @@ export default function TestForm() {
 }
 ```
 
+test
+
 {% nova-preview fields=[
-  { name: "test", title: "Test Field", type: "string", width: 100 }
+{ name: "test", title: "Test Field", type: "string", width: 100 }
 ] /%}
 
 If this renders without errors, ReactFast Forms is installed correctly!
