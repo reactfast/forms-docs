@@ -14,7 +14,7 @@ Get ReactFast Forms up and running in your React project in just a few steps.
 
 Before installing ReactFast Forms, make sure you have:
 
-- **React 18+** - ReactFast Forms requires React 18 or higher
+- **React 16+** - ReactFast Forms requires React 18 or higher
 - **React DOM 18+** - Required for DOM rendering
 - **Node.js 16+** - For npm/yarn package management
 
@@ -65,30 +65,28 @@ ReactFast Forms requires React 18 or higher. If you're using an older version of
 To verify that ReactFast Forms is installed correctly, create a simple test component:
 
 ```jsx
-import { FastForm, createFormHandler } from "@reactfast/forms";
+import { Form, createFormHandler } from "@reactfast/forms";
 import { useState } from "react";
 
 const fields = [
-  { name: "test", title: "Test Field", type: "string", width: 100 }
+  { name: "test", title: "Test Field", type: "string", width: 100 },
 ];
 
 export default function TestForm() {
   const [formData, setFormData] = useState({});
-  
+
   const handleChange = createFormHandler({
     fields,
     setState: setFormData,
   });
 
-  return (
-    <FastForm
-      fields={fields}
-      onChange={handleChange}
-      formData={formData}
-    />
-  );
+  return <Form fields={fields} onChange={handleChange} formData={formData} />;
 }
 ```
+
+{% nova-preview fields = [
+  { name: "test", title: "Test Field", type: "string", width: 100 },
+] /%}
 
 If this renders without errors, ReactFast Forms is installed correctly!
 
